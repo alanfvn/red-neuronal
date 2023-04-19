@@ -53,12 +53,10 @@ class Neuron{
     // y(t) = f[sum(w_i * x_i -0)]
     let sum = 0
 
-    for(let i = 0; i < 3; i++){
+    for(let i = 0; i < this.inputs.length; i++){
       const xi = this.inputs[i]
       const wi = this.weights[i]
-
       if(xi === undefined || wi === undefined) throw new Error("Please check your weights or inputs!")
-
       sum += xi * wi
     }
     // step function

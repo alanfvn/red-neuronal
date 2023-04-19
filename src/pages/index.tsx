@@ -9,6 +9,7 @@ export default function Home({data}: any){
     "or_r": null, "and_r": null
   })
 
+
   const sw = data.startWeights
   const ew = data.endWeights
   const iter = data.iterations
@@ -45,17 +46,24 @@ Cantidad de iteraciones = ${iter["and"]}
     if(!good){
       alert('Por favor verifica los valores')
       return 
-    }else{
-      return
     }
 
-    const resp = await fetch(`http://localhost:3000/api/neuron/train`,{
+    const params = new URLSearchParams({
+      or_1: `${or_1}`,
+      or_2: `${or_2}`,
+      and_1: `${and_1}`,
+      and_2: `${and_2}`,
+    })
+
+    const resp = await fetch(`http://localhost:3000/api/neuron/predict?${params}`,{
       method: "GET",
       headers: {
         "Content-Type": "application/json"
       }})
 
-    const value = await resp.json()
+    const {prediction_or, prediction_and}= await resp.json()
+
+    setInput({...input, ["or_r"]: prediction_or, ["and_r"]: prediction_and})
   }
 
 
@@ -86,7 +94,7 @@ Cantidad de iteraciones = ${iter["and"]}
             <form onSubmit={handleSubmit}>
               <div className="mb-5">
                 <div className="mb-3">
-                  <label className="font-bold">Cálculo AND</label>
+                  <label className="font-bold">Cálculo OR</label>
                 </div>
                 <div className="flex flex-col w-3/4 gap-3">
 
@@ -150,7 +158,10 @@ Cantidad de iteraciones = ${iter["and"]}
 
               </div>
               <div className="flex mt-5 w-full">
-                <input type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4"/>
+                <input 
+                  value="Enviar"
+                  type="submit" 
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4"/>
               </div>
             </form>
           </div>
@@ -160,16 +171,12 @@ Cantidad de iteraciones = ${iter["and"]}
   )
 }
 
-export async function getServerSideProps(context: any) {
-
-  const resp = await fetch(`http://localhost:3000/api/neuron/train`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  )
+export async function getServerSideProps(_: any) {
+  const resp = await fetch(`http://localhost:3000/api/neuron/train`,{
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"}
+  })
   const data = await resp.json()
   return {
     props: {

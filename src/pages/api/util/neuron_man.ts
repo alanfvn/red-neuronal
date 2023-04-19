@@ -12,7 +12,6 @@ function doTraining(){
   const cloneOr = JSON.parse(JSON.stringify(orNeuron));
   const cloneAnd = JSON.parse(JSON.stringify(andNeuron));
 
-
   const tlog = new TrainingLog()
 
   tlog.setStartWeights({
